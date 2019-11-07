@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title></title>
+<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"/>
+<script src="js/jquery-1.11.0.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/bootstrap.js" type="text/javascript" charset="utf-8"></script>
+<style type="text/css">
+	.carousel-inner .item img{
+		width: 100%;
+		height: 100%;
+	}
+</style>
+</head>
+<body>
+	<div class="container">
+		<div class="row">
+			<div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+			  <!-- Indicators -->
+			  <ol class="carousel-indicators">
+			    <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
+			    <li data-target="#carousel-example-generic" data-slide-to="1"></li>
+			    <li data-target="#carousel-example-generic" data-slide-to="2"></li>
+			  </ol>
+			
+			  <!-- Wrapper for slides -->
+			  <div class="carousel-inner" role="listbox" style="height: 200px;">
+			    <div class="item active">
+			      <img src="img/a.jpg" alt="...">
+			      <div class="carousel-caption">
+			        ...
+			      </div>
+			    </div>
+			    <div class="item">
+			      <img src="img/a.png" alt="...">
+			      <div class="carousel-caption">
+			        ...
+			      </div>
+			    </div>
+			    <div class="item">
+			      <img src="img/pic.jpg" alt="...">
+			      <div class="carousel-caption">
+			        ...
+			      </div>
+			    </div>
+			  </div>
+			
+			  <!-- Controls -->
+			  <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
+			    <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+			    <span class="sr-only">Previous</span>
+			  </a>
+			  <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
+			    <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+			    <span class="sr-only">Next</span>
+			  </a>
+			</div>
+		</div>
+		
+		<div class="row">
+			<div>
+			  <div class="form-group">
+			    <label for="exampleInputEmail1">用户名</label>
+			    <input type="text" class="form-control" id="user" placeholder="username">
+			  </div>
+			  <div class="form-group">
+			    <label for="exampleInputPassword1">密码</label>
+			    <input type="text" class="form-control" id="pass" placeholder="Password">
+			  </div>
+			  <div class="form-group">
+			  	<label for="sex">性别</label>
+			  	<div class="form-control" id="ra">
+				  	<span>男</span><input type="radio" name="sex" value="男"/>
+				  	<span>女</span><input type="radio" name="sex" value="女"/>
+			  	</div>
+			  </div>
+			  <div class="form-group">
+			  	<label for="work">职业</label>
+			  	<select id="select"  class="form-control">
+			  		<option value="HTML5工程师">HTML5工程师</option>
+			  		<option value="IOS工程师">IOS工程师</option>
+			  		<option value="JAVA工程师">JAVA工程师</option>
+			  	</select>
+			  </div>
+			  <button type="button" class="btn btn-success luru">录入</button>
+			</div>
+		</div>
+		<div class="row">
+			<input type="text" class="form-control" id="cha" placeholder="请输入要搜索的姓名"/>
+			<button class="btn btn-block btn-danger cha" data-toggle="modal" data-target="#motai">搜索</button>
+		</div>
+		<div class="row">
+			<table class="table">
+				<tr>
+					<th>序号</th>
+					<th>姓名</th>
+					<th>查看</th>
+					<th>删除</th>
+					<th>修改</th>
+				</tr>
+				<tbody class="content"></tbody>
+			</table>
+			
+		</div>
+		<!--查看-->
+		<div class="motai"></div>
+		<!--修改-->
+		<div class="updateM"></div>
+	</div>
+</body>
+<script type="text/javascript">
+$(function(){
+//	录入
+	function luru(){
+		//	录入
+		$('.luru').click(function(){
+			let user=$('#user').val();
+			let pass=$('#pass').val();
+			let sex=$('#ra :radio[name="sex"]:checked').val();
+			let work=$('#select option:selected').val();
+			let obj={
+				user:user,
+				pass:pass,
+				sex:sex,
+				work:work
+			}
+			info.push(obj)
+			localStorage.setItem('infoArr',JSON.stringify(info))
+			alert('ok')
+			location.reload()
+		})
+	}	
+//	获取
+	if(localStorage.getItem('infoArr')){
+		var info=JSON.parse(localStorage.getItem('infoArr'));
+//		录入
+		luru()
+		$('.content').html('')
+		info.map((item,i)=>{
+			$('.content').append(`
+				<tr>
+					<td>${i}</td>
+					<td>${item.user}</td>
+					<td><button class="btn btn-primary kan" name="${i}" data-toggle="modal" data-target="#motai">查看</button></td>
+					<td><button class="btn btn-danger del" name="${i}">删除</button></td>
+					<td><button class="btn btn-success update" name="${i}" data-toggle="modal" data-target="#motai1">修改</button></td>
+				</tr>
+			`)
+		})
+//		删除
+		del()
+//		查看
+		kan()
+//		修改
+		update()	
+	}else{
+		var info=[];
+		luru()
+		$('.content').html('暂无人员信息')
+	}
+	
+//更新
+function update(){
+	$('.update').click(function(){
+		let i=$(this).attr('name');
+		let con=info[i];
+		
+		$('.updateM').html(`
+			<div class="modal fade" id="motai1" tabindex="-1" role="dialog">
+			  <div class="modal-dialog" role="document">
+			    <div class="modal-content">
+			      <div class="modal-header">
+			        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			        <h4 class="modal-title">信息</h4>
+			      </div>
+			      <div class="modal-body">	
+					<div class="form-group">
+					    <label for="exampleInputEmail1">用户名</label>
+					    <input type="text" class="form-control" id="user1" placeholder="${con.user}">
+					  </div>
+					  <div class="form-group">
+					    <label for="exampleInputPassword1">密码</label>
+					    <input type="text" class="form-control" id="pass1" placeholder="${con.pass}">
+					  </div>
+					  <div class="form-group">
+					  	<label for="sex">性别</label>
+					  	<div class="form-control" id="ra1">
+						  	<span>男</span><input type="radio" name="sex" value="男"/>
+						  	<span>女</span><input type="radio" name="sex" value="女"/>
+					  	</div>
+					  </div>
+					  <div class="form-group">
+					  	<label for="work">职业</label>
+					  	<select id="select1"  class="form-control">
+					  		<option value="HTML5工程师">HTML5工程师</option>
+					  		<option value="IOS工程师">IOS工程师</option>
+					  		<option value="JAVA工程师">JAVA工程师</option>
+					  	</select>
+					  </div>
+			      </div>
+			      <div class="modal-footer">
+			        <button type="button" class="btn btn-default save" data-dismiss="modal">保存</button>
+			      </div>
+			    </div>
+			  </div>
+			</div>
+		`)
+		
+		$('.save').click(function(){
+			let user=$('#user1').val();
+			let pass=$('#pass1').val();
+			let sex=$('#ra1 :radio[name="sex"]:checked').val();
+			let work=$('#select1 option:selected').val();
+			con.user=user;
+			con.pass=pass;
+			con.sex=sex;
+			con.work=work;
+			info[i]=con
+			localStorage.setItem('infoArr',JSON.stringify(info))
+			alert('ok')
+			location.reload()
+		})
+		
+	})
+}
+//删除
+function  del () {
+	$('.del').click(function(){
+		let i=$(this).attr('name')
+		info.splice(i,1)
+		localStorage.setItem('infoArr',JSON.stringify(info))
+		if(info.length==0){
+			localStorage.removeItem('infoArr')
+		}
+		alert('ok')
+		location.reload()
+	})
+	
+}
+
+//查看
+	function mt(con){
+		$('.motai').html(`
+			<div class="modal fade" id="motai" tabindex="-1" role="dialog">
+			  <div class="modal-dialog" role="document">
+			    <div class="modal-content">
+			      <div class="modal-header">
+			        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			        <h4 class="modal-title">信息</h4>
+			      </div>
+			      <div class="modal-body">
+			        <p>姓名:${con.user}</p>
+			        <p>密码:${con.pass}</p>
+			        <p>性别:${con.sex}</p>
+			        <p>职位:${con.work}</p>
+			      </div>
+			      <div class="modal-footer">
+			        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			      </div>
+			    </div>
+			  </div>
+			</div>
+		`)
+	}
+	function kan () {
+		$('.kan').click(function(){
+			let i=$(this).attr('name')
+			let con=info[i];
+			mt(con)
+		})
+	}	
+	
+//	查询
+	$(".cha").click(function(){
+		let users=$("#cha").val();
+		let newinfo=info.filter(function(item){
+			return item.user==users
+		})
+		if(newinfo.length>0){
+			mt(newinfo[0])	
+		}else{
+			alert('用户不存在')
+			location.reload()
+		}
+
+	})
+		
+})
+</script>
+</html>
